@@ -1,8 +1,3 @@
-/// <reference types="react" />
-/// <reference types="@react-three/fiber" />
-/// <reference types="@react-three/drei" />
-/// <reference types="three" />
-
 import React, { Suspense, useRef, useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, useAnimations, useGLTF } from '@react-three/drei';
@@ -13,53 +8,11 @@ interface ModelViewerProps {
   text: string;
   className?: string;
   onAnimationError?: (error: string) => void;
+  onAnimationsLoaded?: (names: string[]) => void;
 }
 
 // Ensure the model path is relative to the public directory
 const MODEL_PATH = '/RobotExpressive.glb';
-
-// Animation mapping with fallbacks and word combinations
-const ANIMATION_MAP: Record<string, string[]> = {
-  // Greetings
-  'hello': ['Wave', 'Greeting'],
-  'hi': ['Wave', 'Greeting'],
-  'hey': ['Wave', 'Greeting'],
-  'good morning': ['Wave', 'Greeting'],
-  'good afternoon': ['Wave', 'Greeting'],
-  'good evening': ['Wave', 'Greeting'],
-  'good night': ['Wave', 'Greeting'],
-  
-  // Common phrases
-  'nice to meet you': ['Dance', 'Wave'],
-  'thank you': ['Bow', 'Wave'],
-  'thanks': ['Bow', 'Wave'],
-  'goodbye': ['Wave', 'Bow'],
-  'bye': ['Wave', 'Bow'],
-  'see you': ['Wave', 'Bow'],
-  'see you later': ['Wave', 'Bow'],
-  
-  // Responses
-  'yes': ['Nod', 'Wave'],
-  'no': ['Shake', 'Wave'],
-  'maybe': ['Shake', 'Wave'],
-  'okay': ['Nod', 'Wave'],
-  'ok': ['Nod', 'Wave'],
-  
-  // Requests
-  'please': ['Bow', 'Wave'],
-  'help': ['Wave', 'Greeting'],
-  'excuse me': ['Wave', 'Greeting'],
-  'sorry': ['Bow', 'Wave'],
-  
-  // Emotions
-  'happy': ['Dance', 'Wave'],
-  'sad': ['Bow', 'Wave'],
-  'angry': ['Shake', 'Wave'],
-  'excited': ['Dance', 'Wave'],
-  
-  // Default animations
-  'default': ['Idle', 'Wave'],
-};
 
 // Add a function to check if the model exists
 async function checkModelExists(path: string): Promise<boolean> {
@@ -73,7 +26,7 @@ async function checkModelExists(path: string): Promise<boolean> {
   }
 }
 
-function SignModel({ text, onAnimationError }: { text: string; onAnimationError?: (error: string) => void }) {
+function SignModel({ text, onAnimationError, onAnimationsLoaded }: { text: string; onAnimationError?: (error: string) => void; onAnimationsLoaded?: (names: string[]) => void }) {
   const group = useRef<THREE.Group>(null);
   const [modelError, setModelError] = useState<string | null>(null);
   const [modelData, setModelData] = useState<{ scene: THREE.Group; animations: THREE.AnimationClip[] } | null>(null);
@@ -102,67 +55,47 @@ function SignModel({ text, onAnimationError }: { text: string; onAnimationError?
     loadModel();
   }, [gltf, onAnimationError]);
 
-  const { actions, names } = useAnimations(modelData?.animations || [], group);
+  const { actions } = useAnimations(modelData?.animations || [], group);
   const [currentAction, setCurrentAction] = useState<THREE.AnimationAction | null>(null);
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
-    if (!text.trim() || modelError || !modelData) return;
+    if (modelError || !modelData) return;
 
-    const playAnimation = async (animationName: string) => {
-      const action = actions[animationName];
-      if (!action) {
-        onAnimationError?.(`Animation "${animationName}" not found`);
-        return false;
-      }
+    // If no text, play Idle if available
+    const animationName = text.trim() || 'Idle';
+    const action = actions[animationName];
 
-      setIsTransitioning(true);
-      
-      // Fade out current animation
+    if (!action) {
+      onAnimationError?.(`Animation "${animationName}" not found`);
+      return;
+    }
+
+    // Only play if not already playing this animation
+    if (currentAction !== action) {
+      // Fade out previous action
       if (currentAction) {
         currentAction.fadeOut(0.3);
-        await new Promise(resolve => setTimeout(resolve, 300));
       }
-
-      // Play new animation
+      // Play new action
       action.reset().fadeIn(0.3).play();
       setCurrentAction(action);
-      setIsTransitioning(false);
-      return true;
-    };
-
-    const cleanText = text.trim().toLowerCase();
-    let possibleAnimations = ['Idle'];
-
-    // Find matching animations
-    for (const [key, animations] of Object.entries(ANIMATION_MAP)) {
-      if (cleanText.includes(key)) {
-        possibleAnimations = animations;
-        break;
-      }
     }
-    
-    // Try each animation in the list until one works
-    const playNextAnimation = async (index: number) => {
-      if (index >= possibleAnimations.length) {
-        onAnimationError?.(`No matching animation found for "${text}"`);
-        return;
-      }
-
-      const success = await playAnimation(possibleAnimations[index]);
-      if (!success) {
-        playNextAnimation(index + 1);
-      }
-    };
-
-    playNextAnimation(0);
 
     return () => {
-      if (currentAction) {
+      if (currentAction && currentAction !== action) {
         currentAction.fadeOut(0.3);
       }
     };
   }, [text, actions, currentAction, onAnimationError, modelError, modelData]);
+
+  // Log available animation names for debugging
+  useEffect(() => {
+    if (modelData?.animations) {
+      const animNames = modelData.animations.map(a => a.name);
+      console.log('Available model animations:', animNames);
+      if (onAnimationsLoaded) onAnimationsLoaded(animNames);
+    }
+  }, [modelData, onAnimationsLoaded]);
 
   if (modelError) {
     return (
@@ -190,7 +123,7 @@ function SignModel({ text, onAnimationError }: { text: string; onAnimationError?
   );
 }
 
-export function ModelViewer({ text, className = '', onAnimationError }: ModelViewerProps) {
+export function ModelViewer({ text, className = '', onAnimationError, onAnimationsLoaded }: ModelViewerProps) {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [modelExists, setModelExists] = useState<boolean | null>(null);
@@ -237,7 +170,7 @@ export function ModelViewer({ text, className = '', onAnimationError }: ModelVie
   return (
     <div className={`relative w-full h-full min-h-[400px] ${className}`}>
       <Canvas
-        camera={{ position: [0, 0, 5], fov: 45 }}
+        camera={{ position: [0, 1, 5], fov: 45 }}
         style={{ background: 'transparent' }}
         dpr={[1, 2]} // Optimize for different screen densities
       >
@@ -257,7 +190,7 @@ export function ModelViewer({ text, className = '', onAnimationError }: ModelVie
           />
           
           {/* Model */}
-          <SignModel text={text} onAnimationError={handleAnimationError} />
+          <SignModel text={text} onAnimationError={handleAnimationError} onAnimationsLoaded={onAnimationsLoaded} />
         </Suspense>
       </Canvas>
       

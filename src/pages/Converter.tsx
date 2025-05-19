@@ -10,13 +10,10 @@ export default function Converter() {
   const [currentText, setCurrentText] = useState('');
   const [availableAnimations, setAvailableAnimations] = useState<string[]>([]);
 
-  // Fetch available animations from the ModelViewer (static list for now)
-  useEffect(() => {
-    // These should match the animation names in your GLB model
-    setAvailableAnimations([
-      'Idle', 'Wave', 'Greeting', 'Dance', 'Bow', 'Nod', 'Shake',
-    ]);
-  }, []);
+  // Set available animations when the model loads
+  const handleAnimationsLoaded = (names: string[]) => {
+    setAvailableAnimations(names);
+  };
 
   // Live update the model animation as user types
   useEffect(() => {
@@ -33,9 +30,9 @@ export default function Converter() {
   }, [inputText, availableAnimations]);
 
   return (
-    <div className="converter-root">
+    <div className="converter-root" style={{ paddingTop: '10rem' }}>
       <div className="converter-input-section">
-        <h1 className="converter-title">Robot Sign Language Converter</h1>
+        <h1 className="converter-title">Sign Language Converter</h1>
         <input
           className="converter-input"
           type="text"
@@ -48,13 +45,20 @@ export default function Converter() {
           <h2>Available Animations</h2>
           <ul>
             {availableAnimations.map(anim => (
-              <li key={anim} className={inputText === anim ? 'active' : ''}>{anim}</li>
+              <li
+                key={anim}
+                className={inputText === anim ? 'active' : ''}
+                onClick={() => setInputText(anim)}
+                style={{ userSelect: 'none' }}
+              >
+                {anim}
+              </li>
             ))}
           </ul>
         </div>
       </div>
       <div className="converter-model-section">
-        <ModelViewer text={currentText} />
+        <ModelViewer text={currentText} onAnimationsLoaded={handleAnimationsLoaded} />
       </div>
     </div>
   );
