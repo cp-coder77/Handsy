@@ -16,8 +16,12 @@ export default function Converter() {
 
   // Live update the model animation as user types
   useEffect(() => {
-    if (availableAnimations.includes(inputText)) {
-      setCurrentText(inputText);
+    // Find a case-insensitive match
+    const match = availableAnimations.find(
+      anim => anim.toLowerCase() === inputText.trim().toLowerCase()
+    );
+    if (match) {
+      setCurrentText(match); // Use the correct case for ModelViewer
       setError('');
     } else if (inputText.trim() !== '') {
       setCurrentText('');
@@ -43,16 +47,19 @@ export default function Converter() {
         <div className="converter-animations-list">
           <h2>Available Animations</h2>
           <ul>
-            {availableAnimations.map(anim => (
-              <li
-                key={anim}
-                className={inputText === anim ? 'active' : ''}
-                onClick={() => setInputText(anim)}
-                style={{ userSelect: 'none' }}
-              >
-                {anim}
-              </li>
-            ))}
+            {availableAnimations.map(anim => {
+              const isActive = inputText.trim().toLowerCase() === anim.toLowerCase();
+              return (
+                <li
+                  key={anim}
+                  className={isActive ? 'active' : ''}
+                  onClick={() => setInputText(anim)}
+                  style={{ userSelect: 'none' }}
+                >
+                  {anim}
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>

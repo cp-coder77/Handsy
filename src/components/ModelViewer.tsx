@@ -61,9 +61,13 @@ function SignModel({ text, onAnimationError, onAnimationsLoaded }: { text: strin
   useEffect(() => {
     if (modelError || !modelData) return;
 
-    // If no text, play Idle if available
+    // Case-insensitive animation name matching
     const animationName = text.trim() || 'Idle';
-    const action = actions[animationName];
+    // Find the actual key in actions that matches (case-insensitive)
+    const actionKey = Object.keys(actions).find(
+      key => key.toLowerCase() === animationName.toLowerCase()
+    );
+    const action = actionKey ? actions[actionKey] : undefined;
 
     if (!action) {
       onAnimationError?.(`Animation "${animationName}" not found`);
