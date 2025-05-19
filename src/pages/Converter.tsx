@@ -1,5 +1,4 @@
-/// <reference types="dom-speech-recognition" />
-
+// src/pages/Converter.tsx
 import React, { useState, useEffect } from 'react';
 import { ModelViewer } from '../components/ModelViewer';
 import '../styles/Converter.css';
@@ -30,7 +29,7 @@ export default function Converter() {
   }, [inputText, availableAnimations]);
 
   return (
-    <div className="converter-root" style={{ paddingTop: '10rem' }}>
+    <div className="converter-root">
       <div className="converter-input-section">
         <h1 className="converter-title">Sign Language Converter</h1>
         <input
@@ -58,7 +57,12 @@ export default function Converter() {
         </div>
       </div>
       <div className="converter-model-section">
-        <ModelViewer text={currentText} onAnimationsLoaded={handleAnimationsLoaded} />
+        <div>
+          <ModelViewer
+            text={currentText}
+            onAnimationsLoaded={handleAnimationsLoaded}
+          />
+        </div>
       </div>
     </div>
   );

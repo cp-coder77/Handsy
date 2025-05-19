@@ -1,97 +1,115 @@
-/* Converter page custom styles */
 .converter-root {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 2rem 0;
-}
-.converter-input-section {
-  flex: 1 1 320px;
-  max-width: 400px;
-  background: #fff;
-  border-radius: 1.5rem;
-  box-shadow: 0 2px 16px rgba(80, 0, 120, 0.07);
-  padding: 2rem;
-  min-width: 280px;
-}
-.converter-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #7c3aed;
-  margin-bottom: 1.5rem;
-}
-.converter-input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.75rem;
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-  outline: none;
-  transition: border 0.2s;
-}
-.converter-input:focus {
-  border-color: #a78bfa;
-}
-.converter-error {
-  color: #ef4444;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  margin-bottom: 1rem;
-}
-.converter-animations-list {
-  margin-top: 2rem;
-}
-.converter-animations-list h2 {
-  font-size: 1.1rem;
-  color: #7c3aed;
-  margin-bottom: 0.5rem;
-}
-.converter-animations-list ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-.converter-animations-list li {
-  background: #f3f4f6;
-  color: #6d28d9;
-  padding: 0.5rem 1rem;
-  border-radius: 0.75rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-.converter-animations-list li.active {
-  background: #a78bfa;
-  color: #fff;
-}
-.converter-model-section {
-  flex: 2 1 480px;
-  min-width: 320px;
-  max-width: 700px;
-  background: #f9fafb;
-  border-radius: 1.5rem;
-  box-shadow: 0 2px 16px rgba(80, 0, 120, 0.04);
-  padding: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 500px;
-}
-@media (max-width: 900px) {
-  .converter-root {
-    flex-direction: column;
-    align-items: stretch;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem 0;
+  }
+  .converter-input-section {
+    flex: 1 1 320px;
+    max-width: 400px;
+    background: #fff;
+    border-radius: 1.5rem;
+    box-shadow: 0 2px 16px rgba(80, 0, 120, 0.07);
+    padding: 2rem;
+    min-width: 280px;
+  }
+  .converter-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #7c3aed;
+    margin-bottom: 1.5rem;
+  }
+  .converter-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    outline: none;
+    transition: border 0.2s;
+  }
+  .converter-input:focus {
+    border-color: #a78bfa;
+  }
+  .converter-error {
+    color: #ef4444;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+  }
+  .converter-animations-list {
+    margin-top: 2rem;
+  }
+  .converter-animations-list h2 {
+    font-size: 1.1rem;
+    color: #7c3aed;
+    margin-bottom: 0.5rem;
+  }
+  .converter-animations-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .converter-animations-list li {
+    background: #f3f4f6;
+    color: #6d28d9;
+    padding: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+  .converter-animations-list li.active {
+    background: #a78bfa;
+    color: #fff;
   }
   .converter-model-section {
-    margin-top: 2rem;
-    min-height: 350px;
+    flex: 2 1 600px;
+    min-width: 400px;
+    max-width: 900px;
+    background: #f9fafb;
+    border-radius: 1.5rem;
+    box-shadow: 0 2px 16px rgba(80, 0, 120, 0.04);
+    padding: 2.5rem 2rem 2.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 600px;
+    height: 100%;
+    box-sizing: border-box;
   }
-} 
+  .converter-model-section > div {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  /* Ensure the Canvas fills its container */
+  .converter-model-section > div canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }
+  @media (max-width: 900px) {
+    .converter-root {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .converter-model-section {
+      margin-top: 2rem;
+      min-height: 350px;
+      min-width: unset;
+      max-width: unset;
+      padding: 1.5rem 0.5rem;
+    }
+  }

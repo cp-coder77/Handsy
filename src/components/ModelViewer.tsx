@@ -168,10 +168,10 @@ export function ModelViewer({ text, className = '', onAnimationError, onAnimatio
   }
 
   return (
-    <div className={`relative w-full h-full min-h-[400px] ${className}`}>
+    <div className={`relative w-full h-full ${className}`} style={{ width: '100%', height: '100%' }}>
       <Canvas
-        camera={{ position: [0, 1, 5], fov: 45 }}
-        style={{ background: 'transparent' }}
+        camera={{ position: [0, 20, 0], fov: 60 }}
+        style={{ background: 'transparent', width: '100%', height: '100%' }}
         dpr={[1, 2]} // Optimize for different screen densities
       >
         <Suspense fallback={<ModelLoader />}>
