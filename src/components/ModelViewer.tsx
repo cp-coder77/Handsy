@@ -16,7 +16,7 @@ interface ModelViewerProps {
 }
 
 // Ensure the model path is relative to the public directory
-const MODEL_PATH = '/model.glb';
+const MODEL_PATH = '/RobotExpressive.glb';
 
 // Animation mapping with fallbacks and word combinations
 const ANIMATION_MAP: Record<string, string[]> = {
